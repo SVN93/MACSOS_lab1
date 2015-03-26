@@ -13,8 +13,10 @@ TEMPLATE = app
 
 
 SOURCES += main.cpp\
-        mainwindow.cpp
+        mainwindow.cpp \
+    wavfile.cpp
 
-HEADERS  += mainwindow.h
+HEADERS  += mainwindow.h \
+    wavfile.h
 
 FORMS    += mainwindow.ui

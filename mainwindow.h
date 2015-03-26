@@ -15,6 +15,11 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
+    QString openFile();
+    QString nameOfFileFromFileDialog();
+private slots:
+    void on_choseFileButton_clicked();
+
 private:
     Ui::MainWindow *ui;
 };
