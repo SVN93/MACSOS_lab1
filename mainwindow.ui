@@ -47,6 +47,9 @@
      <layout class="QHBoxLayout" name="horizontalLayout_2">
       <item>
        <widget class="QPushButton" name="firstMethod">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>First Method</string>
         </property>
@@ -54,6 +57,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="secondMethod">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Second Method</string>
         </property>
@@ -61,6 +67,9 @@
       </item>
       <item>
        <widget class="QPushButton" name="thirdMethod">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
         <property name="text">
          <string>Third Method</string>
         </property>

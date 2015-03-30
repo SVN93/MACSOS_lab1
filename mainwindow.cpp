@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include <QFileDialog>
+#include "wavfile.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -28,6 +29,12 @@ QString MainWindow::nameOfFileFromFileDialog()
 void MainWindow::on_choseFileButton_clicked()
 {
     QString filename = nameOfFileFromFileDialog();
+
+    if (!filename.isEmpty()) {
+        ui->firstMethod->setEnabled(true);
+        ui->secondMethod->setEnabled(true);
+        ui->thirdMethod->setEnabled(true);
+    }
 
     ui->fileSourceLabel->setText(filename);
 }
