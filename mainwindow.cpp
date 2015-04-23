@@ -34,7 +34,10 @@ void MainWindow::on_choseFileButton_clicked()
         ui->firstMethod->setEnabled(true);
         ui->secondMethod->setEnabled(true);
         ui->thirdMethod->setEnabled(true);
+    } else {
+        ui->fileSourceLabel->setText(filename);
+        QFile *file = new QFile(filename);
+        WavFile wavFile(file);
+        wavFile;
     }
-
-    ui->fileSourceLabel->setText(filename);
 }
