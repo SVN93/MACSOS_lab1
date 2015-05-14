@@ -1,7 +1,6 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include <QFileDialog>
-#include "wavfile.h"
+#include "qdebug.h"
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -26,6 +25,18 @@ QString MainWindow::nameOfFileFromFileDialog()
     return filename;
 }
 
+QFile * MainWindow::fileFromFileDialog()
+{
+    QString filename = QFileDialog::getSaveFileName(
+            this,
+            tr("Save wav file"),
+            QDir::currentPath(),
+            tr("Wav file (*.wav);;All files (*.*)"));
+    QFile *file = new QFile(filename);
+
+    return file;
+}
+
 void MainWindow::on_choseFileButton_clicked()
 {
     QString filename = nameOfFileFromFileDialog();
@@ -34,10 +45,40 @@ void MainWindow::on_choseFileButton_clicked()
         ui->firstMethod->setEnabled(true);
         ui->secondMethod->setEnabled(true);
         ui->thirdMethod->setEnabled(true);
-    } else {
+
         ui->fileSourceLabel->setText(filename);
         QFile *file = new QFile(filename);
         WavFile wavFile(file);
-//        wavFile;
+        MainWindow::wavFile = &wavFile;
+    } else {
+        ui->firstMethod->setEnabled(false);
+        ui->secondMethod->setEnabled(false);
+        ui->thirdMethod->setEnabled(false);
     }
+}
+
+// Коэффициент корреляции
+void MainWindow::on_firstMethod_clicked()
+{
+    if (MainWindow::wavFile) {
+        QFile *file = fileFromFileDialog();
+    }
+}
+
+// Энергия
+void MainWindow::on_secondMethod_clicked()
+{
+
+}
+
+// Частота переходов через ноль
+void MainWindow::on_thirdMethod_clicked()
+{
+
+}
+
+// Результирующий метод
+void MainWindow::on_resultMethod_clicked()
+{
+
 }
