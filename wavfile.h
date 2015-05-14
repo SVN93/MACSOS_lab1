@@ -8,6 +8,9 @@
 #include <math.h>
 #include <QFileDialog>
 
+#define N 300
+#define K 10000
+
 // Структура, описывающая заголовок WAV файла.
 struct WAVHEADER
 {
@@ -81,7 +84,7 @@ public:
     ~WavFile();
     WavFile(QFile *file);
     WAVHEADER header;
-
+    qint16 body[N];
 signals:
 
 public slots:

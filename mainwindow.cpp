@@ -38,6 +38,6 @@ void MainWindow::on_choseFileButton_clicked()
         ui->fileSourceLabel->setText(filename);
         QFile *file = new QFile(filename);
         WavFile wavFile(file);
-        wavFile;
+//        wavFile;
     }
 }
