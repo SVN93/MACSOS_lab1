@@ -22,6 +22,7 @@ public:
     QString openFile();
     QString nameOfFileFromFileDialog();
     QFile * fileFromFileDialog();
+    void writeToFile(QVector <qint16> result, QFile *file);
 private slots:
     void on_choseFileButton_clicked();
 
