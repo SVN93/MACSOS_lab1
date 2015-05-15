@@ -74,6 +74,24 @@ struct WAVHEADER
     // Далее следуют непосредственно Wav данные.
 };
 
+typedef struct
+{
+    char chunkid[4]; //RIFF
+    quint32 chunksize; // оставшийся размер
+    char format[4]; // WAVE
+    char subchunk1Id[4]; // fmt
+    quint32 subchunk1Size; // размер до конца секции
+    quint16 audioFormat; // Аудио формат
+    quint16 numChannels; // Количество каналов
+    quint32 sampleRate; // Частота дискретизации
+    quint32 byteRate; // Количество байт, переданных за секунду воспроизведения.
+    quint16 blockAlign; // Количество байт для одного сэмпла, включая все каналы.
+    quint16 bitsPerSample; // Количество бит в сэмпле.
+    char subchunk2Id[4]; // data
+    quint32 subchunk2Size; // Количество байт в области данных.
+} vaw_header; // заголовок WAV-файла
+
+
 class WavFile : public QObject
 {
     Q_OBJECT
@@ -81,7 +99,7 @@ public:
     explicit WavFile(QObject *parent = 0);
     ~WavFile();
     WavFile(QFile *file);
-    WAVHEADER header;
+    vaw_header header;
     QVector <qint16> body;
 signals:
 

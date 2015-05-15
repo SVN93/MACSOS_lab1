@@ -3,7 +3,7 @@
 WavFile::WavFile(QFile *file)
 {
     file->open(QIODevice::ReadOnly);
-    file->read(reinterpret_cast<char *>(&this->header), sizeof(WAVHEADER));
+    file->read(reinterpret_cast<char *>(&this->header), sizeof(vaw_header));
     this->body.resize(this->header.subchunk2Size / sizeof(qint16));
     qint32 bla = this->header.subchunk2Size / sizeof(qint16);
     for (int i = 0; i < this->header.subchunk2Size / sizeof(qint16); i++) {
