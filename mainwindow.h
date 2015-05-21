@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "newwavfile.h"
+#include "wavfile.h"
 #include <QFileDialog>
 #include <QVector>
 
@@ -40,8 +40,11 @@ private slots:
 
     void on_resultMethod_clicked();
 
+    void on_makeNoiseVersion_clicked();
+
 private:
     Ui::MainWindow *ui;
+    QVector <qint16> signalWithNoise;
     QVector <qint16> kBody;
     QVector <qint16> eBody;
     QVector <qint16> zBody;

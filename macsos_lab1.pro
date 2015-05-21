@@ -16,12 +16,12 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
 #    wavfile.cpp \
-    newwavfile.cpp \
-    utils.cpp
+    utils.cpp \
+    wavfile.cpp
 
 HEADERS  += mainwindow.h \
 #    wavfile.h \
-    newwavfile.h \
-    utils.h
+    utils.h \
+    wavfile.h
 
 FORMS    += mainwindow.ui

@@ -2,108 +2,67 @@
 #define WAVFILE_H
 
 #include <QObject>
-#include <stdio.h>
-//#include <tchar.h>
-//#include <conio.h>
-#include <math.h>
+#include <QFile>
+#include <QAudioFormat>
 #include <QFileDialog>
 #include <QVector>
 
-// Структура, описывающая заголовок WAV файла.
-struct WAVHEADER
+struct chunk
 {
-    // WAV-формат начинается с RIFF-заголовка:
-
-    // Содержит символы "RIFF" в ASCII кодировке
-    // (0x52494646 в big-endian представлении)
-    quint8 chunkId[4];
-
-    // 36 + subchunk2Size, или более точно:
-    // 4 + (8 + subchunk1Size) + (8 + subchunk2Size)
-    // Это оставшийся размер цепочки, начиная с этой позиции.
-    // Иначе говоря, это размер файла - 8, то есть,
-    // исключены поля chunkId и chunkSize.
-    quint32 chunkSize;
-
-    // Содержит символы "WAVE"
-    // (0x57415645 в big-endian представлении)
-    quint8 format[4];
-
-    // Формат "WAVE" состоит из двух подцепочек: "fmt " и "data":
-    // Подцепочка "fmt " описывает формат звуковых данных:
-
-    // Содержит символы "fmt "
-    // (0x666d7420 в big-endian представлении)
-    quint8 subchunk1Id[4];
-
-    // 16 для формата PCM.
-    // Это оставшийся размер подцепочки, начиная с этой позиции.
-    quint32 subchunk1Size;
-
-    // Аудио формат, полный список можно получить здесь http://audiocoding.ru/wav_formats.txt
-    // Для PCM = 1 (то есть, Линейное квантование).
-    // Значения, отличающиеся от 1, обозначают некоторый формат сжатия.
-    quint16 audioFormat;
-
-    // Количество каналов. Моно = 1, Стерео = 2 и т.д.
-    quint16 numChannels;
-
-    // Частота дискретизации. 8000 Гц, 44100 Гц и т.д.
-    quint32 sampleRate;
-
-    // sampleRate * numChannels * bitsPerSample/8
-    quint32 byteRate;
-
-    // numChannels * bitsPerSample/8
-    // Количество байт для одного сэмпла, включая все каналы.
-    quint16 blockAlign;
-
-    // Так называемая "глубиная" или точность звучания. 8 бит, 16 бит и т.д.
-    quint16 bitsPerSample;
-
-    // Подцепочка "data" содержит аудио-данные и их размер.
-
-    // Содержит символы "data"
-    // (0x64617461 в big-endian представлении)
-    quint8 subchunk2Id[4];
-
-    // numSamples * numChannels * bitsPerSample/8
-    // Количество байт в области данных.
-    quint32 subchunk2Size;
-
-    // Далее следуют непосредственно Wav данные.
+    char        id[4];
+    quint32     size;
 };
 
-typedef struct
+struct RIFFHeader
 {
-    char chunkid[4]; //RIFF
-    quint32 chunksize; // оставшийся размер
-    char format[4]; // WAVE
-    char subchunk1Id[4]; // fmt
-    quint32 subchunk1Size; // размер до конца секции
-    quint16 audioFormat; // Аудио формат
-    quint16 numChannels; // Количество каналов
-    quint32 sampleRate; // Частота дискретизации
-    quint32 byteRate; // Количество байт, переданных за секунду воспроизведения.
-    quint16 blockAlign; // Количество байт для одного сэмпла, включая все каналы.
-    quint16 bitsPerSample; // Количество бит в сэмпле.
-    char subchunk2Id[4]; // data
-    quint32 subchunk2Size; // Количество байт в области данных.
-} vaw_header; // заголовок WAV-файла
+    chunk       descriptor;     // "RIFF"
+    char        type[4];        // "WAVE"
+};
 
-
-class WavFile : public QObject
+struct WAVEHeader
 {
-    Q_OBJECT
+    chunk       descriptor;
+    quint16     audioFormat;
+    quint16     numChannels;
+    quint32     sampleRate;
+    quint32     byteRate;
+    quint16     blockAlign;
+    quint16     bitsPerSample;
+    quint32     subchunk2Id;
+    quint32     subchunk2Size;
+};
+
+struct DATAHeader
+{
+    chunk       descriptor;
+};
+
+struct CombinedHeader
+{
+    RIFFHeader  riff;
+    WAVEHeader  wave;
+};
+
+class WavFile : public QFile
+{
 public:
-    explicit WavFile(QObject *parent = 0);
-    ~WavFile();
-    WavFile(QFile *file);
-    vaw_header header;
-    QVector <qint16> body;
-signals:
+    WavFile(QObject *parent = 0);
 
-public slots:
+    using QFile::open;
+    bool open(const QString &fileName);
+    const QAudioFormat &fileFormat() const;
+    CombinedHeader header;
+    qint64 headerLength() const;
+    QVector <qint16> body;
+
+private:
+    bool readHeader();
+    void readBody(qint64 subchunk2Size);
+
+private:
+    QAudioFormat m_fileFormat;
+    qint64 m_headerLength;
+
 };
 
 #endif // WAVFILE_H
