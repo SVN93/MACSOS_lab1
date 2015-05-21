@@ -103,7 +103,11 @@ void MainWindow::on_firstMethod_clicked()
             tmp2_r += ( this->wavFile->body[i] * this->wavFile->body[i] );
         }
 
-        R = K * (1 + tmp_r) / tmp2_r;
+        if (tmp2_r == 0) {
+            R = 0;
+        } else {
+            R = K * (1 + tmp_r) / tmp2_r;
+        }
         result.append(R);
     }
 
