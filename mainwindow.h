@@ -18,7 +18,7 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    WavFile         *wavFile;
+    WavFile *wavFile;
 
     /**
      * Load data from WAV file
@@ -42,6 +42,10 @@ private slots:
 
 private:
     Ui::MainWindow *ui;
+    QVector <qint16> kBody;
+    QVector <qint16> eBody;
+    QVector <qint16> zBody;
+    QVector <qint16> resultBody;
 };
 
 #endif // MAINWINDOW_H

@@ -89,7 +89,6 @@ void MainWindow::on_firstMethod_clicked()
 {
     // Коэффициент корреляции
     qint16 R = 0;
-//    QVector <qint16> result;
     this->kBody.clear();
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
         qint64 tmp_r = 0;
@@ -107,7 +106,6 @@ void MainWindow::on_firstMethod_clicked()
         } else {
             R = K * (1 + tmp_r) / tmp2_r;
         }
-//        result.append(R);
         this->kBody.append(R);
     }
 
@@ -122,7 +120,6 @@ void MainWindow::on_secondMethod_clicked()
 {
     // Энергия
     qint16 E = 0;
-//    QVector <qint16> result;
     this->eBody.clear();
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
         qint64 tmp_e = 0;
@@ -130,7 +127,6 @@ void MainWindow::on_secondMethod_clicked()
             tmp_e += abs(this->wavFile->body[i]);
         }
         E = 3 * (qreal)tmp_e / N;
-//        result.append(E);
         this->eBody.append(E);
     }
 
@@ -146,7 +142,6 @@ void MainWindow::on_thirdMethod_clicked()
     // Частота переходов через ноль
     qint16 Z = 0;
     qreal duration = N * this->wavFile->header.wave.blockAlign / this->wavFile->header.wave.byteRate;
-//    QVector <qint16> result;
     this->zBody.clear();
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
         qint16 counter = 0;
@@ -155,7 +150,6 @@ void MainWindow::on_thirdMethod_clicked()
                 counter++;
         }
         Z = K * counter / (2 * duration);
-//        result.append(Z);
         this->zBody.append(Z);
     }
 
