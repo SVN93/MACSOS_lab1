@@ -4,7 +4,8 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui \
+            multimedia
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -14,9 +15,13 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-    wavfile.cpp
+#    wavfile.cpp \
+    newwavfile.cpp \
+    utils.cpp
 
 HEADERS  += mainwindow.h \
-    wavfile.h
+#    wavfile.h \
+    newwavfile.h \
+    utils.h
 
 FORMS    += mainwindow.ui

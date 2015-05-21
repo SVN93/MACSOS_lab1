@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
 #include "qdebug.h"
+#include "utils.h"
 
 #define N 300
 #define K 10000
@@ -15,6 +16,25 @@ MainWindow::MainWindow(QWidget *parent) :
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+bool MainWindow::loadFile(const QString &fileName)
+{    
+    bool result = false;
+    Q_ASSERT(!wavFile);
+    Q_ASSERT(!fileName.isEmpty());
+    wavFile = new WavFile(this);
+    if (wavFile->open(fileName)) {
+        if (isPCMS16LE(wavFile->fileFormat())) {
+            result = true;
+        }
+    }
+
+    if (result) {
+        wavFile = new WavFile(this);
+        wavFile->open(fileName);
+    }
+    return result;
 }
 
 QString MainWindow::nameOfFileFromFileDialog()
@@ -45,14 +65,12 @@ void MainWindow::on_choseFileButton_clicked()
     QString filename = nameOfFileFromFileDialog();
 
     if (!filename.isEmpty()) {
-        ui->firstMethod->setEnabled(true);
-        ui->secondMethod->setEnabled(true);
-        ui->thirdMethod->setEnabled(true);
-
-        ui->fileSourceLabel->setText(filename);
-        QFile *file = new QFile(filename);
-        WavFile wavFile(file);
-        this->wavFile = &wavFile;
+        if (this->loadFile(filename)) {
+            ui->firstMethod->setEnabled(true);
+            ui->secondMethod->setEnabled(true);
+            ui->thirdMethod->setEnabled(true);
+            ui->fileSourceLabel->setText(this->wavFile->fileName());
+        }
     } else {
         ui->firstMethod->setEnabled(false);
         ui->secondMethod->setEnabled(false);
@@ -63,7 +81,7 @@ void MainWindow::on_choseFileButton_clicked()
 // Коэффициент корреляции
 void MainWindow::writeToFile(QVector <qint16> result, QFile *file)
 {
-    file->write(reinterpret_cast<char *>(&this->wavFile->header), sizeof(WAVHEADER));
+    file->write(reinterpret_cast<char *>(&this->wavFile->header), sizeof(CombinedHeader));
     file->write(reinterpret_cast<char *>(&result), result.length()*sizeof(qint16));
 }
 
@@ -88,10 +106,11 @@ void MainWindow::on_firstMethod_clicked()
     if (this->wavFile) {
         QFile *file = fileFromFileDialog();
         writeToFile(result, file);
+        file->close();
     }
 }
 
-// Энергия
+//// Энергия
 void MainWindow::on_secondMethod_clicked()
 {
     // Энергия
@@ -109,6 +128,7 @@ void MainWindow::on_secondMethod_clicked()
     if (this->wavFile) {
         QFile *file = fileFromFileDialog();
         writeToFile(result, file);
+        file->close();
     }
 }
 
@@ -117,7 +137,7 @@ void MainWindow::on_thirdMethod_clicked()
 {
     // Частота переходов через ноль
     qint16 Z = 0;
-    qreal duration = N * this->wavFile->header.blockAlign / this->wavFile->header.byteRate;
+    qreal duration = N * this->wavFile->header.wave.blockAlign / this->wavFile->header.wave.byteRate;
     QVector <qint16> result;
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
         qint16 counter = 0;
@@ -132,6 +152,7 @@ void MainWindow::on_thirdMethod_clicked()
     if (this->wavFile) {
         QFile *file = fileFromFileDialog();
         writeToFile(result, file);
+        file->close();
     }
 }
 

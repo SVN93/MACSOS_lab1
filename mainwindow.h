@@ -2,7 +2,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "wavfile.h"
+#include "newwavfile.h"
 #include <QFileDialog>
 
 namespace Ui {
@@ -17,7 +17,12 @@ public:
     explicit MainWindow(QWidget *parent = 0);
     ~MainWindow();
 
-    WavFile *wavFile;
+    WavFile         *wavFile;
+
+    /**
+     * Load data from WAV file
+     */
+    bool loadFile(const QString &fileName);
 
     QString openFile();
     QString nameOfFileFromFileDialog();
