@@ -1,5 +1,4 @@
 #include <qendian.h>
-#include <QVector>
 #include <QDebug>
 #include "utils.h"
 #include "newwavfile.h"
@@ -30,7 +29,7 @@ qint64 WavFile::headerLength() const
 
 void WavFile::readBody(qint64 subchunk2Size)
 {
-    seek(m_headerLength);
+//    seek(m_headerLength);
     this->body.resize(subchunk2Size / sizeof(qint16));
     for (int i = 0; i < subchunk2Size / sizeof(qint16); i++) {
         qint16 tmp = 0;

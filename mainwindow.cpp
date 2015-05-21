@@ -81,24 +81,28 @@ void MainWindow::on_choseFileButton_clicked()
 // Коэффициент корреляции
 void MainWindow::writeToFile(QVector <qint16> result, QFile *file)
 {
+    file->open(QIODevice::WriteOnly);
     file->write(reinterpret_cast<char *>(&this->wavFile->header), sizeof(CombinedHeader));
     file->write(reinterpret_cast<char *>(&result), result.length()*sizeof(qint16));
+    file->close();
 }
 
 void MainWindow::on_firstMethod_clicked()
 {
     // Коэффициент корреляции
     qint16 R = 0;
-    qint64 tmp_r = 0;
     QVector <qint16> result;
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
-        for (int i = j; (i < j + N - 1) && (i < this->wavFile->body.size()); i++) {
-            tmp_r += this->wavFile->body[i] * this->wavFile->body[i + 1];
+        qint64 tmp_r = 0;
+        for (int i = j; (i < j + N - 1) && (i < this->wavFile->body.size() - 1); i++) {
+            tmp_r += ( this->wavFile->body[i] * this->wavFile->body[i + 1] );
         }
+
         qint64 tmp2_r = 0;
         for (int i = j; (i < j + N) && (i < this->wavFile->body.size()); i++) {
-            tmp2_r += this->wavFile->body[i] * this->wavFile->body[i];
+            tmp2_r += ( this->wavFile->body[i] * this->wavFile->body[i] );
         }
+
         R = K * (1 + tmp_r) / tmp2_r;
         result.append(R);
     }
@@ -106,7 +110,6 @@ void MainWindow::on_firstMethod_clicked()
     if (this->wavFile) {
         QFile *file = fileFromFileDialog();
         writeToFile(result, file);
-        file->close();
     }
 }
 
@@ -115,10 +118,10 @@ void MainWindow::on_secondMethod_clicked()
 {
     // Энергия
     qint16 E = 0;
-    qint64 tmp_e = 0;
     QVector <qint16> result;
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
-        for (int i = j; (i < j + N - 1) && (i < this->wavFile->body.size()); i++) {
+        qint64 tmp_e = 0;
+        for (int i = j; (i < j + N) && (i < this->wavFile->body.size()); i++) {
             tmp_e += abs(this->wavFile->body[i]);
         }
         E = 3 * (qreal)tmp_e / N;
@@ -128,7 +131,6 @@ void MainWindow::on_secondMethod_clicked()
     if (this->wavFile) {
         QFile *file = fileFromFileDialog();
         writeToFile(result, file);
-        file->close();
     }
 }
 
@@ -141,7 +143,7 @@ void MainWindow::on_thirdMethod_clicked()
     QVector <qint16> result;
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
         qint16 counter = 0;
-        for (int i = j; (i < j + N - 1) && (i < this->wavFile->body.size()); i++) {
+        for (int i = j; (i < j + N - 1) && (i < this->wavFile->body.size() - 1); i++) {
             if (this->wavFile->body[i] * this->wavFile->body[i + 1] <= 0)
                 counter++;
         }
@@ -152,7 +154,6 @@ void MainWindow::on_thirdMethod_clicked()
     if (this->wavFile) {
         QFile *file = fileFromFileDialog();
         writeToFile(result, file);
-        file->close();
     }
 }
 

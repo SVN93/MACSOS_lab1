@@ -4,6 +4,7 @@
 #include <QMainWindow>
 #include "newwavfile.h"
 #include <QFileDialog>
+#include <QVector>
 
 namespace Ui {
 class MainWindow;
