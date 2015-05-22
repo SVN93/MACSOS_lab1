@@ -29,6 +29,9 @@ public:
     QString nameOfFileFromFileDialog();
     QFile * fileFromFileDialog();
     void writeToFile(QVector <qint16> result, QFile *file);
+    void koreletionMethod();
+    void energiColculation();
+    void ZeroMethod();
 private slots:
     void on_choseFileButton_clicked();
 

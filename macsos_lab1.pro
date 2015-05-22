@@ -4,6 +4,7 @@
 #
 #-------------------------------------------------
 
+
 QT       += core gui \
             multimedia
 
@@ -15,13 +16,21 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         mainwindow.cpp \
-#    wavfile.cpp \
     utils.cpp \
     wavfile.cpp
 
 HEADERS  += mainwindow.h \
-#    wavfile.h \
     utils.h \
     wavfile.h
 
 FORMS    += mainwindow.ui
+
+INCLUDEPATH += /usr/local/qwt-6.1.2
+
+win32:CONFIG(release, debug|release): LIBS += -L$$PWD/../../../../usr/local/qwt-6.1.2/lib/release/ -lqwt
+else:win32:CONFIG(debug, debug|release): LIBS += -L$$PWD/../../../../usr/local/qwt-6.1.2/lib/debug/ -lqwt
+else:mac: LIBS += -F$$PWD/../../../../usr/local/qwt-6.1.2/lib/ -framework qwt
+else:unix: LIBS += -L$$PWD/../../../../usr/local/qwt-6.1.2/lib/ -lqwt
+
+INCLUDEPATH += $$PWD/../../../../usr/local/qwt-6.1.2
+DEPENDPATH += $$PWD/../../../../usr/local/qwt-6.1.2

@@ -87,17 +87,20 @@ void MainWindow::on_choseFileButton_clicked()
             ui->firstMethod->setEnabled(true);
             ui->secondMethod->setEnabled(true);
             ui->thirdMethod->setEnabled(true);
-            ui->makeNoiseVersion->setEnabled(true);
+            ui->resultMethod->setEnabled(true);
             ui->fileSourceLabel->setText(this->wavFile->fileName());
+            ui->makeNoiseVersion->setEnabled(true);
         }
     } else {
         ui->firstMethod->setEnabled(false);
         ui->secondMethod->setEnabled(false);
         ui->thirdMethod->setEnabled(false);
+        ui->resultMethod->setEnabled(false);
+        ui->fileSourceLabel->clear();
+        ui->makeNoiseVersion->setEnabled(false);
     }
 }
 
-// Коэффициент корреляции
 void MainWindow::writeToFile(QVector <qint16> result, QFile *file)
 {
     if (!file->fileName().isEmpty()) {
@@ -108,9 +111,9 @@ void MainWindow::writeToFile(QVector <qint16> result, QFile *file)
     }
 }
 
-void MainWindow::on_firstMethod_clicked()
+// Коэффициент корреляции
+void MainWindow::koreletionMethod()
 {
-    // Коэффициент корреляции
     qint16 R = 0;
     this->kBody.clear();
     QVector <qint16> currentVector;
@@ -138,17 +141,11 @@ void MainWindow::on_firstMethod_clicked()
         }
         this->kBody.append(R);
     }
-
-    if (this->wavFile) {
-        QFile *file = fileFromFileDialog();
-        writeToFile(this->kBody, file);
-    }
 }
 
-//// Энергия
-void MainWindow::on_secondMethod_clicked()
+// Энергия
+void MainWindow::energiColculation()
 {
-    // Энергия
     qint16 E = 0;
     this->eBody.clear();
     for (int j = 0; j < this->wavFile->body.size(); j += N) {
@@ -159,17 +156,11 @@ void MainWindow::on_secondMethod_clicked()
         E = 3 * (qreal)tmp_e / N;
         this->eBody.append(E);
     }
-
-    if (this->wavFile) {
-        QFile *file = fileFromFileDialog();
-        writeToFile(this->eBody, file);
-    }
 }
 
 // Частота переходов через ноль
-void MainWindow::on_thirdMethod_clicked()
+void MainWindow::ZeroMethod()
 {
-    // Частота переходов через ноль
     qint16 Z = 0;
     qreal duration = N * this->wavFile->header.wave.blockAlign / this->wavFile->header.wave.byteRate;
     this->zBody.clear();
@@ -189,6 +180,34 @@ void MainWindow::on_thirdMethod_clicked()
         Z = K * counter / (2 * duration);
         this->zBody.append(Z);
     }
+}
+
+void MainWindow::on_firstMethod_clicked()
+{
+    // Коэффициент корреляции
+    koreletionMethod();
+
+    if (this->wavFile) {
+        QFile *file = fileFromFileDialog();
+        writeToFile(this->kBody, file);
+    }
+}
+
+void MainWindow::on_secondMethod_clicked()
+{
+    // Энергия
+    energiColculation();
+
+    if (this->wavFile) {
+        QFile *file = fileFromFileDialog();
+        writeToFile(this->eBody, file);
+    }
+}
+
+void MainWindow::on_thirdMethod_clicked()
+{
+    // Частота переходов через ноль
+    ZeroMethod();
 
     if (this->wavFile) {
         QFile *file = fileFromFileDialog();
@@ -199,6 +218,11 @@ void MainWindow::on_thirdMethod_clicked()
 // Результирующий метод
 void MainWindow::on_resultMethod_clicked()
 {
+    // Выполняем предыдущие 3
+    this->koreletionMethod();
+    this->energiColculation();
+    this->ZeroMethod();
+
     for (int i = 0; i < this->eBody.length(); i++) {
         if (this->zBody[i] == 0) {
             qint16 result = (this->kBody[i] * this->eBody[i]);
