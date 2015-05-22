@@ -62,17 +62,19 @@ void MainWindow::on_makeNoiseVersion_clicked()
 {
     this->signalWithNoise.clear();
     qint16 max = 0;
-    foreach (qint16 el, this->wavFile->body) {
-        if (el > max) {
-            max = el;
+    for (int i = 0; i < this->wavFile->body.size(); i++) {
+        if (this->wavFile->body[i] > max) {
+            max = this->wavFile->body[i];
         }
     }
+
     for (int i = 0; i < this->wavFile->body.size(); i++) {
-        this->signalWithNoise.append( this->wavFile->body[i] + 0.1 * max);
+        qint16 tmpNoise = this->wavFile->body[i] + qRound( 0.1 * max );
+        this->signalWithNoise.append(tmpNoise);
     }
 
     ui->useNoiseVersion->setEnabled(true);
-    if (this->wavFile && (this->signalWithNoise.length())) {
+    if (this->wavFile) {
         QFile *file = fileFromFileDialog();
         writeToFile(this->signalWithNoise, file);
     }
