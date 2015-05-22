@@ -32,17 +32,13 @@ public:
     void koreletionMethod();
     void energiColculation();
     void ZeroMethod();
+
 private slots:
     void on_choseFileButton_clicked();
-
     void on_firstMethod_clicked();
-
     void on_secondMethod_clicked();
-
     void on_thirdMethod_clicked();
-
     void on_resultMethod_clicked();
-
     void on_makeNoiseVersion_clicked();
 
 private:
