@@ -29,9 +29,8 @@ qint64 WavFile::headerLength() const
 
 void WavFile::readBody(qint64 subchunk2Size)
 {
-//    seek(m_headerLength);
     this->body.resize(subchunk2Size / sizeof(qint16));
-    for (int i = 0; i < subchunk2Size / sizeof(qint16); i++) {
+    for (unsigned long long i = 0; i < subchunk2Size / sizeof(qint16); i++) {
         qint16 tmp = 0;
         this->read(reinterpret_cast<char *>(&tmp), sizeof(qint16));
         this->body.append(tmp);
